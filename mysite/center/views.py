@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from center.models import Center
 from center.forms import CenterForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
+
 # Create your views here.
 def center_list(request):
     objects = Center.objects.all()
@@ -14,7 +15,7 @@ def center_list(request):
 def center_detail(request, id):
     objects = Center.objects.get(id=id)
     context = {
-        "center": object,
+        "center": objects,
     }
     return render(request, "center/center-detail.html", context)
 
@@ -35,3 +36,36 @@ def create_center(request):
     }
     return render(request, "center/create-center.html", context)
     
+def update_center(request, id):
+    try:
+        center = Center.objects.get(id=id)
+    except Center.DoesNotExist:
+        raise Http404("Center instance is not found")
+    if request.method == "POST":
+        form = CenterForm(request.POST, instance = center)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("center:detail", kwargs={"id": center.id}))
+        return render (request, "center/update-center.html", {"form": form})
+
+
+    #GEt
+    context = {
+        "form": CenterForm(instance = center)
+    }
+    return render (request, "center/update-center.html", context)
+
+def delete_center(request, id):
+    try:
+        center = Center.objects.get(id=id)
+    except Center.DoesNotExist:
+        raise Http404("Center instance not found")
+    if request.method == "POST":
+        center.delete()
+        return HttpResponseRedirect(reverse("center:list"))
+    #get
+    context = {
+        "center": center,
+    }
+    return render(request, "center/delete-center.html", context)
+

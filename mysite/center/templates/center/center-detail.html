@@ -37,13 +37,13 @@
         </button>
 
         <button class="btn btn-sm btn-success m-1">
-          <a href="#">
+          <a href="{% url 'center:update' center.id %}">
             <i class="fas fa-pen"></i> Update Center
           </a>
         </button>
             
         <button class="btn btn-sm btn-danger m-1">
-          <a href="#">
+          <a href="{% url 'center:delete' center.id %}">
             <i class="fas fa-trash"></i> Delete Center
           </a>
         </button>
