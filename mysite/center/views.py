@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.views import generic
 from django.core.paginator import Paginator
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 
 # Create your views here.
 def center_list(request):
@@ -31,10 +33,14 @@ def create_center(request):
         form = CenterForm(request.POST)
         if form.is_valid():
             form.save()
+            #message
+            messages.success(request, "Vaccination Center Created Successfully")
             return HttpResponseRedirect(reverse("center:list"))
+        messages.error(request, "Please Enter a Valid Data")
+        return render(request, "center/create-center.html", {"form": form})
 
-        else:
-            render(request, "center/create-center.html", {"form": form})
+        # else:
+        #     render(request, "center/create-center.html", {"form": form})
         
     #GET
     context={
@@ -52,7 +58,9 @@ def update_center(request, id):
         form = CenterForm(request.POST, instance = center)
         if form.is_valid():
             form.save()
+            messages.success(request, "Vaccinaiton Center Updated Successfully")
             return HttpResponseRedirect(reverse("center:detail", kwargs={"id": center.id}))
+        messages.error(request, "Please Enter a Valid Data")
         return render (request, "center/update-center.html", {"form": form})
 
 
@@ -69,6 +77,7 @@ def delete_center(request, id):
         raise Http404("Center instance not found")
     if request.method == "POST":
         center.delete()
+        messages.success(request, "Vaccination Center Deleted Succesfully")
         return HttpResponseRedirect(reverse("center:list"))
     #get
     context = {
@@ -106,10 +115,11 @@ class StorageDetail(generic.DeleteView):
         return context
 
 
-class CreateStorage(generic.CreateView):
+class CreateStorage(SuccessMessageMixin, generic.CreateView):
     model= Storage
     form_class = StorageForm
     template_name = "storage/storage-create.html"
+    success_message = "Storage Created Successfully"
 
 
     def get_form_kwargs(self):
@@ -128,10 +138,11 @@ class CreateStorage(generic.CreateView):
     
 
 
-class StorageUpdate(generic.UpdateView):
+class StorageUpdate(SuccessMessageMixin, generic.UpdateView):
     model = Storage
     form_class = StorageForm
     template_name = "storage/storage-update.html"
+    success_message = "Storage Updated Successfully"
 
 
     def get_form_kwargs(self):
@@ -145,9 +156,10 @@ class StorageUpdate(generic.UpdateView):
 
 
 
-class StorageDelete(generic.DeleteView):
+class StorageDelete(SuccessMessageMixin, generic.DeleteView):
     model = Storage
     template_name = "storage/storage-delete.html"
+    success_message = "Storage Deleted Successfully"
 
     def get_success_url(self):
         return reverse("center:storage-list", kwargs={"center_id": self.get_object().center.id})
