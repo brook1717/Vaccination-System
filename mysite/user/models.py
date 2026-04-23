@@ -78,6 +78,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = "first_name", "last_name"
 
 
+    def __str__(self):
+        return self.email
+
     def get_full_name(self):
         parts = [self.first_name, self.middle_name, self.last_name]
         return " ".join(p for p in parts if p)

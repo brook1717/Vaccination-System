@@ -17,7 +17,3 @@ tk==0.1.0
 tzdata==2025.2
 urllib3==2.4.0
 virtualenv==20.31.2
-
-
-#entirely numeric
-oneone@one.com
