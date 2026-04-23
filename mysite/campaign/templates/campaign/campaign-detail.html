@@ -1,0 +1,67 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %}
+    <title>Campaign Detail</title>
+{% endblock title %}
+
+{% block content %}
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title mb-4"><i class="fas fa-bullhorn"></i> Campaign Details</h5>
+
+    <div class="row mb-1">
+      <div class="col-5 col-sm-4 col-md-3 col-lg-2 fw-bold">Vaccine</div>
+      <div class="col-7 col-sm-8 col-md-9 col-lg-10">{{ campaign.vaccine.name }}</div>
+    </div>
+
+    <div class="row mb-1">
+      <div class="col-5 col-sm-4 col-md-3 col-lg-2 fw-bold">Center</div>
+      <div class="col-7 col-sm-8 col-md-9 col-lg-10">{{ campaign.center.name }}</div>
+    </div>
+
+    <div class="row mb-1">
+      <div class="col-5 col-sm-4 col-md-3 col-lg-2 fw-bold">Period</div>
+      <div class="col-7 col-sm-8 col-md-9 col-lg-10">{{ campaign.start_date }} to {{ campaign.end_date }}</div>
+    </div>
+
+    <div class="row mb-1">
+      <div class="col-5 col-sm-4 col-md-3 col-lg-2 fw-bold">Doses Required</div>
+      <div class="col-7 col-sm-8 col-md-9 col-lg-10">{{ campaign.vaccine.number_of_doses }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-3">
+  <h5><i class="fas fa-clock"></i> Available Slots</h5>
+
+  {% if available_slots %}
+  <table class="table table-responsive table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Start Time</th>
+        <th scope="col">End Time</th>
+        <th scope="col">Spots Left</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for slot in available_slots %}
+      <tr>
+        <td>{{ slot.date }}</td>
+        <td>{{ slot.start_time }}</td>
+        <td>{{ slot.end_time }}</td>
+        <td>{{ slot.available }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-muted">No available slots for this campaign.</p>
+  {% endif %}
+
+  <a href="{% url 'campaign:list' %}" class="btn btn-sm btn-secondary mt-2">
+    <i class="fas fa-arrow-left"></i> Back to Campaigns
+  </a>
+</div>
+{% endblock content %}

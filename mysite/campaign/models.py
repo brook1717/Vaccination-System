@@ -27,5 +27,9 @@ class Slot(models.Model):
     reserved= models.IntegerField(default=0, null=True, blank=True)
 
 
+    @property
+    def available(self):
+        return (self.max_capacity or 0) - (self.reserved or 0)
+
     def __str__(self):
         return str(self.date) + " | " + str(self.start_time) + " | " + str(self.end_time)
