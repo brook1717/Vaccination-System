@@ -14,7 +14,7 @@ def send_email_verification(request, id):
     message = render_to_string(
         template_name="user/email-verify.html",
         context={
-            "full name": user.get_full_name(),
+            "full_name": user.get_full_name(),
             "domain": current_site.domain,
             "uid": urlsafe_base64_encode(force_bytes(user.id)),
             "token": EmailVerificationTokenGenerator.make_token(user)

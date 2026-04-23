@@ -140,8 +140,10 @@ def profile_update(request):
 def email_verification_request(request):
     if not request.user.is_email_verified:
         send_email_verification(request, request.user.id)
-        return HttpResponse("Email Verification Link sent to your email address")
-    return HttpResponseRedirect("Email already Verified")
+        messages.success(request, "Email Verification Link sent to your email address")
+        return HttpResponseRedirect(reverse("user:profile-view"))
+    messages.info(request, "Email already verified")
+    return HttpResponseRedirect(reverse("user:profile-view"))
     
 
 

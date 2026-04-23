@@ -104,7 +104,7 @@ class StorageList(generic.ListView):
 
 
 
-class StorageDetail(generic.DeleteView):
+class StorageDetail(generic.DetailView):
     model= Storage
     template_name = "storage/storage-detail.html"
 
