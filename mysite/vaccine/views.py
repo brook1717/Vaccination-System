@@ -7,8 +7,15 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+
 # Create your views here.
-class VaccineList(View):
+class VaccineList(LoginRequiredMixin, View):
     def get(self, request):
         vaccine_list = Vaccine.objects.all().order_by("name")
         paginator = Paginator(vaccine_list, 2)
@@ -22,7 +29,7 @@ class VaccineList(View):
         }
         return render(request, "vaccine/vaccine-list.html", context)
 
-class VaccineDetail(View):
+class VaccineDetail(LoginRequiredMixin, View):
     def get(self, request, id):
         try: 
             vaccine = Vaccine.objects.get(id=id)
@@ -34,7 +41,7 @@ class VaccineDetail(View):
         }
         return render(request, "vaccine/vaccine-detail.html", context)
 
-class CreateVaccine(View):
+class CreateVaccine(StaffRequiredMixin, View):
     form_class = VaccineForm
     template_name = "vaccine/create-vaccine.html"
     def get(self, request):
@@ -50,7 +57,7 @@ class CreateVaccine(View):
             return HttpResponseRedirect(reverse("vaccine:list"))
         messages.error(request, "Please Enter a Valid Data")
         return render(request, self.template_name, {"form": form})
-class UpdateVaccine(View):
+class UpdateVaccine(StaffRequiredMixin, View):
     form_class = VaccineForm
     template_name = "vaccine/update-vaccine.html"
     def get(self, request, id):
@@ -69,7 +76,7 @@ class UpdateVaccine(View):
         messages.error(request, "Please Enter a Valid Data")
         return render(request, self.template_name, {"form": form})
     
-class DeleteVaccine(View):
+class DeleteVaccine(StaffRequiredMixin, View):
     template_name = "vaccine/delete-vaccine.html"
     def get(self, request, id ):
         vaccine = get_object_or_404(Vaccine, id=id)

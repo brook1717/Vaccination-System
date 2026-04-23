@@ -7,8 +7,16 @@ from django.views import generic
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
 
 # Create your views here.
+@login_required
 def center_list(request):
     objects = Center.objects.all().order_by("name")
     paginator = Paginator(objects, 2)
@@ -21,6 +29,7 @@ def center_list(request):
     }
     return render(request, "center/center-list.html", context)
 
+@login_required
 def center_detail(request, id):
     objects = Center.objects.get(id=id)
     context = {
@@ -28,6 +37,7 @@ def center_detail(request, id):
     }
     return render(request, "center/center-detail.html", context)
 
+@staff_member_required
 def create_center(request):
     if request.method == "POST":
         form = CenterForm(request.POST)
@@ -49,6 +59,7 @@ def create_center(request):
     }
     return render(request, "center/create-center.html", context)
     
+@staff_member_required
 def update_center(request, id):
     try:
         center = Center.objects.get(id=id)
@@ -70,6 +81,7 @@ def update_center(request, id):
     }
     return render (request, "center/update-center.html", context)
 
+@staff_member_required
 def delete_center(request, id):
     try:
         center = Center.objects.get(id=id)
@@ -88,7 +100,7 @@ def delete_center(request, id):
 
 #generic views
 
-class StorageList(generic.ListView):
+class StorageList(LoginRequiredMixin, generic.ListView):
     queryset = Storage.objects.all()
     template_name = "storage/storage-list.html"
     ordering = ["id"]
@@ -104,7 +116,7 @@ class StorageList(generic.ListView):
 
 
 
-class StorageDetail(generic.DetailView):
+class StorageDetail(LoginRequiredMixin, generic.DetailView):
     model= Storage
     template_name = "storage/storage-detail.html"
 
@@ -115,7 +127,7 @@ class StorageDetail(generic.DetailView):
         return context
 
 
-class CreateStorage(SuccessMessageMixin, generic.CreateView):
+class CreateStorage(StaffRequiredMixin, SuccessMessageMixin, generic.CreateView):
     model= Storage
     form_class = StorageForm
     template_name = "storage/storage-create.html"
@@ -138,7 +150,7 @@ class CreateStorage(SuccessMessageMixin, generic.CreateView):
     
 
 
-class StorageUpdate(SuccessMessageMixin, generic.UpdateView):
+class StorageUpdate(StaffRequiredMixin, SuccessMessageMixin, generic.UpdateView):
     model = Storage
     form_class = StorageForm
     template_name = "storage/storage-update.html"
@@ -156,7 +168,7 @@ class StorageUpdate(SuccessMessageMixin, generic.UpdateView):
 
 
 
-class StorageDelete(SuccessMessageMixin, generic.DeleteView):
+class StorageDelete(StaffRequiredMixin, SuccessMessageMixin, generic.DeleteView):
     model = Storage
     template_name = "storage/storage-delete.html"
     success_message = "Storage Deleted Successfully"

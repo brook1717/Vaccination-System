@@ -9,6 +9,8 @@ from django.contrib.auth import get_user_model
 from user.utils import EmailVerificationTokenGenerator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 
 
@@ -74,6 +76,8 @@ def login(request):
 
 
 
+@login_required
+@require_POST
 def logout(request):
     user_logout(request)
     messages.info(request, "Logged out successfully")
@@ -82,6 +86,7 @@ def logout(request):
 
 
 
+@login_required
 def change_password(request):
     if request.method == "POST":
         form = ChangePasswordForm(request.user, request.POST)
@@ -104,6 +109,7 @@ def change_password(request):
     return render(request, "user/change-password.html", context)
 
 
+@login_required
 def profile_view(request): 
     context = {
 
@@ -115,6 +121,7 @@ def profile_view(request):
 
 
 
+@login_required
 def profile_update(request):
     if request.method == "POST":
         form = ProfileUpdateForm(request.POST, request.FILES,  instance=request.user)
@@ -137,6 +144,7 @@ def profile_update(request):
     return render(request, "user/profile-update.html", context)
 
 
+@login_required
 def email_verification_request(request):
     if not request.user.is_email_verified:
         send_email_verification(request, request.user.id)
@@ -149,6 +157,7 @@ def email_verification_request(request):
 
 
 
+@login_required
 def email_verifier(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
