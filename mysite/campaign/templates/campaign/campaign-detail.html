@@ -42,6 +42,7 @@
         <th scope="col">Start Time</th>
         <th scope="col">End Time</th>
         <th scope="col">Spots Left</th>
+        <th scope="col">Action</th>
       </tr>
     </thead>
 
@@ -52,6 +53,14 @@
         <td>{{ slot.start_time }}</td>
         <td>{{ slot.end_time }}</td>
         <td>{{ slot.available }}</td>
+        <td>
+          <form method="post" action="{% url 'vaccination:book-slot' slot.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-primary">
+              <i class="fas fa-calendar-check"></i> Book
+            </button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
