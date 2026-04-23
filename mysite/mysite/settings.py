@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'center.apps.CenterConfig',
     'campaign.apps.CampaignConfig',
     'vaccination.apps.VaccinationConfig',
+    'rest_framework',
+    'api',
 ]
 
 MIDDLEWARE = [
